@@ -1,16 +1,31 @@
-# React + Vite
+# OrderFlow 📦
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+מערכת תפעולית לניהול ומעקב הזמנות בסניף. המערכת מאפשרת קליטת הזמנות, מעקב אחר לקוחות, ניהול משימות צוות, והרצת יומן מעקב (Audit Log) אחר כלל הפעולות המתבצעות בסניף.
 
-Currently, two official plugins are available:
+## שירותים חיצוניים ואינטגרציות 🔌
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+רשימת השירותים החיצוניים והכלים אליהם המערכת מתממשקת:
 
-## React Compiler
+| שם השירות / אינטגרציה | תיאור השימוש במערכת | סוג השירות |
+| :--- | :--- | :--- |
+| **Supabase** | משמש כמסד הנתונים בענן (מבוסס PostgreSQL). מאחסן את כלל נתוני המערכת: הזמנות, משתמשים, לקוחות, הגדרות דינמיות ויומני פעילות (Audit). ההתממשקות מתבצעת בעזרת ספריית `@supabase/supabase-js`. | מסד נתונים (BaaS) |
+| **WhatsApp API** | אינטגרציה באמצעות פרוטוקול `wa.me`. מאפשרת הפקת הודעות מוכנות מראש ושליחתן ללקוחות בצורה מהירה בלחיצת כפתור, בהתבסס על הגדרות תבנית הווטסאפ הדינמיות שבמערכת. | תקשורת לקוחות |
+| **Email Protocol (`mailto:`)** | אינטגרציה לפתיחת תוכנת המייל המקומית (Outlook, Gmail וכו') עם תבניות עדכון מוכנות מראש הכוללות את פרטי ההזמנה והלקוח. | תקשורת לקוחות |
+| **Web Storage API** | שימוש ב-`sessionStorage` לצורך ניהול אבטחת ההתחברות (למניעת השארת משתמשים מחוברים ללא השגחה), ושימוש ב-`localStorage` בתור מערכת גיבוי במקרה והמערכת פועלת במצב מקומי. | אחסון מקומי |
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## הרצה מקומית בשרת פיתוח
 
-## Expanding the Oxlint configuration
+1. התקן את כלל התלויות במערכת באמצעות הפקודה:
+   ```bash
+   npm install
+   ```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+2. הרץ את שרת הפיתוח של המערכת (Vite):
+   ```bash
+   npm run dev
+   ```
+
+3. (אופציונלי) להרצת בדיקות אוטומטיות בממשק משתמש:
+   ```bash
+   npm run test:ui
+   ```
