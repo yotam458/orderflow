@@ -845,7 +845,7 @@ function App() {
               </div>
             )}
             
-            <form onSubmit={handleLogin}>
+            <form onSubmit={handleLogin} autoComplete="off">
               <div className="form-group">
                 <label className="form-label">כתובת אימייל</label>
                 <input 
@@ -854,6 +854,7 @@ function App() {
                   value={loginEmail} 
                   placeholder="הזן כתובת אימייל"
                   onChange={(e) => setLoginEmail(e.target.value)}
+                  autoComplete="off"
                 />
               </div>
               <div className="form-group">
@@ -864,6 +865,7 @@ function App() {
                   value={loginPassword} 
                   onChange={(e) => setLoginPassword(e.target.value)} 
                   placeholder="הקלד סיסמה לחיבור"
+                  autoComplete="new-password"
                 />
               </div>
               
