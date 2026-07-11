@@ -2,6 +2,8 @@
 
 OrderFlow is a modern operations and management platform designed to streamline logistics, customer tracking, and team management at the branch level. Specifically built for high-efficiency environments (featuring a default dark mode to reduce eye strain), it enables order intake, customer tracking, team permissions, and complete audit logging of all branch activities.
 
+**Live Application Link:** [https://orderflow458.vercel.app](https://orderflow458.vercel.app)
+
 ---
 
 ## 🚀 Core Features
@@ -109,3 +111,13 @@ Bundle the project for production:
 ```bash
 npm run build
 ```
+
+---
+
+## 🌐 Deployment
+
+The application is deployed on **Vercel** with a linked production domain:
+
+* **Production URL**: [https://orderflow458.vercel.app](https://orderflow458.vercel.app)
+* **Hosting Provider**: Vercel (renamed and aliased)
+* **CI/CD**: Connected directly to the GitHub repository [yotam458/orderflow](https://github.com/yotam458/orderflow) for automatic deployments on every commit.
