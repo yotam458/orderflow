@@ -46,8 +46,8 @@ function App() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   
   // Login Form
-  const [loginEmail, setLoginEmail] = useState('yhai458@gmail.com');
-  const [loginPassword, setLoginPassword] = useState('0000');
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   
   // New Order Form
@@ -850,20 +850,11 @@ function App() {
                 <label className="form-label">כתובת אימייל</label>
                 <input 
                   type="email"
-                  list="saved-emails"
                   className="form-input" 
                   value={loginEmail} 
                   placeholder="הזן כתובת אימייל"
-                  onChange={(e) => {
-                    setLoginEmail(e.target.value);
-                    if (e.target.value === 'yhai458@gmail.com') setLoginPassword('0000');
-                    if (e.target.value === 'shel12@gmail.com') setLoginPassword('0000');
-                  }}
+                  onChange={(e) => setLoginEmail(e.target.value)}
                 />
-                <datalist id="saved-emails">
-                  <option value="yhai458@gmail.com">יותם חי (מנהל סניף)</option>
-                  <option value="shel12@gmail.com">שלי (אחראי משמרת)</option>
-                </datalist>
               </div>
               <div className="form-group">
                 <label className="form-label">סיסמה</label>
@@ -880,9 +871,6 @@ function App() {
                 התחבר למערכת
               </button>
             </form>
-            <div style={{marginTop: '20px', fontSize: '12px', color: 'var(--color-outline)', textAlign: 'center'}}>
-              במצב הדגמה מקומי, השתמש בסיסמה <strong>123456</strong>
-            </div>
           </div>
         </div>
       )}
