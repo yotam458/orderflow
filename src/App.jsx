@@ -23,7 +23,8 @@ import {
   FiActivity,
   FiRefreshCw,
   FiEye,
-  FiEyeOff
+  FiEyeOff,
+  FiX
 } from 'react-icons/fi';
 
 function App() {
@@ -889,10 +890,20 @@ function App() {
       {/* RENDER APP CORE IF LOGGED IN */}
       {currentScreen !== 'login' && currentUser && (
         <>
+          {mobileMenuOpen && (
+            <div className="sidebar-backdrop" onClick={() => setMobileMenuOpen(false)}></div>
+          )}
           {/* SIDEBAR NAVIGATION */}
           <aside className={`sidebar ${mobileMenuOpen ? 'open' : ''}`}>
-            <div className="sidebar-brand">
+            <div className="sidebar-brand" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
               <span className="sidebar-logo">OrderFlow</span>
+              <button 
+                onClick={() => setMobileMenuOpen(false)}
+                className="sidebar-close-btn"
+                title="סגור תפריט"
+              >
+                <FiX />
+              </button>
             </div>
             
             <nav className="sidebar-menu">
@@ -959,8 +970,8 @@ function App() {
               <div className="header-title-area">
                 <button 
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
-                  style={{display: 'none', background: 'none', border: 'none', color: '#ffffff', fontSize: '24px', cursor: 'pointer'}}
                   className="mobile-toggle"
+                  title="תפריט"
                 >
                   <FiMenu />
                 </button>

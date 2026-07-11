@@ -672,11 +672,7 @@ h1, h2, h3, h4, h5, h6 {
   gap: var(--spacing-lg);
 }
 
-@media (max-width: 1024px) {
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-  }
-}
+/* Dashboard grid collapses on tablet/mobile */
 
 /* Search bar header */
 .search-wrapper {
@@ -742,18 +738,74 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: var(--spacing-xl);
 }
 
-/* Responsive Overrides */
-@media (max-width: 768px) {
+/* Mobile & Tablet UI Utilities */
+.mobile-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 8px;
+  align-items: center;
+  justify-content: center;
+  margin-left: 12px;
+  border-radius: var(--radius-default);
+  transition: background-color 0.2s;
+}
+
+.mobile-toggle:hover {
+  background-color: var(--color-surface-container-high);
+}
+
+.sidebar-close-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--color-on-surface-variant);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 6px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.sidebar-close-btn:hover {
+  background-color: var(--color-surface-container-high);
+  color: #ffffff;
+}
+
+.sidebar-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 99;
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Responsive Overrides (Tablet & Mobile <= 1024px) */
+@media (max-width: 1024px) {
   .sidebar {
-    transform: translateX(100%); /* Hide sidebar by default on mobile */
+    transform: translateX(100%); /* Hide sidebar by default on tablet/mobile */
   }
   
   .sidebar.open {
     transform: translateX(0);
   }
   
+  .sidebar-close-btn {
+    display: flex;
+  }
+  
   .main-wrapper {
     margin-right: 0;
+    width: 100%;
   }
   
   .main-header {
@@ -768,8 +820,16 @@ h1, h2, h3, h4, h5, h6 {
     grid-template-columns: 1fr;
   }
   
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  
   .headline-lg {
     font-size: 20px;
+  }
+  
+  .mobile-toggle {
+    display: flex;
   }
 }
 
