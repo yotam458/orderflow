@@ -101,6 +101,8 @@ CREATE TABLE settings (
     id INTEGER PRIMARY KEY DEFAULT 1,
     "whatsappTemplate" TEXT,
     "emailTemplate" TEXT,
+    "forceLogoutAt" TEXT,
+    "forceLogoutBy" TEXT,
     -- Ensure only one row exists for global settings
     CONSTRAINT single_row CHECK (id = 1)
 );

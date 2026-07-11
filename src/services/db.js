@@ -91,7 +91,8 @@ export const dbService = {
           name: employee.name, 
           email: employee.email, 
           role: employee.role,
-          employeeNumber: employee.employeeNumber
+          employeeNumber: employee.employeeNumber,
+          loginTime: new Date().toISOString()
         };
         setLocalItem(KEYS.CURRENT_USER, user);
         return user;
@@ -100,8 +101,12 @@ export const dbService = {
         const team = getLocalItem(KEYS.TEAM);
         const matched = team.find(member => member.email.toLowerCase() === email.toLowerCase());
         if (matched && password === '123456') { // Simple global password for demo
-          setLocalItem(KEYS.CURRENT_USER, matched);
-          return matched;
+          const user = {
+            ...matched,
+            loginTime: new Date().toISOString()
+          };
+          setLocalItem(KEYS.CURRENT_USER, user);
+          return user;
         }
         throw new Error('אימייל או סיסמה שגויים (במצב הדגמה השתמש בסיסמה 123456)');
       }
@@ -512,6 +517,24 @@ export const dbService = {
       } else {
         setLocalItem(KEYS.SETTINGS, newSettings);
         return newSettings;
+      }
+    },
+    forceLogoutAll: async (managerId) => {
+      const forceLogoutAt = new Date().toISOString();
+      if (isSupabaseConfigured) {
+        const { data, error } = await supabase
+          .from('settings')
+          .update({ forceLogoutAt, forceLogoutBy: managerId })
+          .eq('id', 1)
+          .select()
+          .single();
+        if (error) throw error;
+        return data;
+      } else {
+        const stored = getLocalItem(KEYS.SETTINGS) || DEFAULT_SETTINGS;
+        const updated = { ...stored, forceLogoutAt, forceLogoutBy: managerId };
+        setLocalItem(KEYS.SETTINGS, updated);
+        return updated;
       }
     }
   },

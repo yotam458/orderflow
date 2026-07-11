@@ -155,10 +155,50 @@ function App() {
       setSettings(allSettings);
       setSettingsForm(allSettings);
       setCustomers(allCustomers);
+
+      // Force Logout Check
+      if (currentUser && allSettings && allSettings.forceLogoutAt) {
+        if (currentUser.id !== allSettings.forceLogoutBy) {
+          const userLoginTime = currentUser.loginTime ? new Date(currentUser.loginTime) : new Date(0);
+          const forceTime = new Date(allSettings.forceLogoutAt);
+          if (userLoginTime < forceTime) {
+            await handleLogout();
+            alert('מנהל המערכת ניתק את כל החיבורים הפעילים במערכת. אנא התחבר מחדש.');
+            return;
+          }
+        }
+      }
     } catch (err) {
       console.error("שגיאה בטעינת נתונים:", err);
     }
   };
+
+  // Periodic Security check for forced logout (every 10 seconds)
+  useEffect(() => {
+    let intervalId;
+    if (currentUser) {
+      intervalId = setInterval(async () => {
+        try {
+          const allSettings = await dbService.settings.get();
+          if (allSettings && allSettings.forceLogoutAt) {
+            if (currentUser.id !== allSettings.forceLogoutBy) {
+              const userLoginTime = currentUser.loginTime ? new Date(currentUser.loginTime) : new Date(0);
+              const forceTime = new Date(allSettings.forceLogoutAt);
+              if (userLoginTime < forceTime) {
+                await handleLogout();
+                alert('מנהל המערכת ניתק את כל החיבורים הפעילים במערכת. אנא התחבר מחדש.');
+              }
+            }
+          }
+        } catch (err) {
+          console.error("שגיאה בבדיקת אבטחה תקופתית:", err);
+        }
+      }, 10000); // 10 seconds
+    }
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [currentUser]);
 
   useEffect(() => {
     if (currentUser) {
@@ -215,6 +255,18 @@ function App() {
     setCurrentUser(null);
     setCurrentScreen('login');
     setMobileMenuOpen(false);
+  };
+
+  const handleForceLogoutAll = async () => {
+    if (window.confirm("האם אתה בטוח שברצונך לנתק את כל שאר המחשבים המחוברים למערכת כעת במיידי? משתמשים אחרים יועברו למסך ההתחברות.")) {
+      try {
+        await dbService.settings.forceLogoutAll(currentUser.id);
+        alert("כל שאר החיבורים הפעילים נותקו בהצלחה!");
+        await fetchData();
+      } catch (err) {
+        alert("שגיאה בניתוק החיבורים: " + err.message);
+      }
+    }
   };
 
   // Order Handlers
@@ -2300,7 +2352,19 @@ function App() {
 
                     {/* Team List */}
                     <div style={{marginBottom: '24px'}}>
-                      <span className="label-sm" style={{display: 'block', marginBottom: '8px'}}>עובדים רשומים בסניף:</span>
+                      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px'}}>
+                        <span className="label-sm" style={{margin: 0}}>עובדים רשומים בסניף:</span>
+                        {currentUser.role === 'manager' && (
+                          <button
+                            onClick={handleForceLogoutAll}
+                            className="btn btn-danger"
+                            style={{padding: '6px 12px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px'}}
+                            title="נתק את כל שאר המחשבים המחוברים למערכת במיידי"
+                          >
+                            <FiLogOut /> נתק את כל שאר המחשבים
+                          </button>
+                        )}
+                      </div>
                       <div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
                         {team.map(member => (
                           <div key={member.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px', backgroundColor: 'var(--color-surface-container-high)', borderRadius: 'var(--radius-default)', border: '1px solid var(--color-border)'}}>
