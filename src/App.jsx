@@ -258,14 +258,25 @@ function App() {
   };
 
   const handleForceLogoutAll = async () => {
-    if (window.confirm("האם אתה בטוח שברצונך לנתק את כל שאר המחשבים המחוברים למערכת כעת במיידי? משתמשים אחרים יועברו למסך ההתחברות.")) {
-      try {
-        await dbService.settings.forceLogoutAll(currentUser.id);
-        alert("כל שאר החיבורים הפעילים נותקו בהצלחה!");
-        await fetchData();
-      } catch (err) {
-        alert("שגיאה בניתוק החיבורים: " + err.message);
-      }
+    if (currentUser.role !== 'manager') {
+      alert("פעולה זו מורשית למנהלי סניף בלבד!");
+      return;
+    }
+
+    const adminPassword = window.prompt("אנא הזן סיסמת מנהל על לאישור ניתוק כל המחשבים:");
+    if (adminPassword === null) return; // User cancelled prompt
+
+    if (adminPassword !== "yhai458") {
+      alert("סיסמת מנהל שגויה! הפעולה בוטלה.");
+      return;
+    }
+
+    try {
+      await dbService.settings.forceLogoutAll(currentUser.id);
+      alert("כל שאר החיבורים הפעילים נותקו בהצלחה!");
+      await fetchData();
+    } catch (err) {
+      alert("שגיאה בניתוק החיבורים: " + err.message);
     }
   };
 
