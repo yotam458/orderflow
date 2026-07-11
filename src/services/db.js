@@ -11,150 +11,10 @@ export const supabase = isSupabaseConfigured
   : null;
 
 
-// Initial Dummy Data for Camping/Outdoor Store
-const INITIAL_ORDERS = [
-  {
-    id: '1001',
-    customerName: 'ישראל ישראלי',
-    customerPhone: '052-1234567',
-    customerEmail: 'israel@gmail.com',
-    items: 'אוהל Coleman instant cabin ל-4 אנשים, מזרן מתנפח יחיד חגור',
-    orderDate: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0], // Yesterday
-    dueTime: '18:00',
-    receiptNumber: 'REC-74892',
-    status: 'ready', // ready = ממתין לאיסוף, in_progress = בתהליך, awaiting_update = ממתין לעדכון, delivered = נאסף
-    paymentStatus: 'paid_full', // paid_full = שולם במלואו, paid_deposit = שולמה מקדמה, unpaid = לא שולם
-    location: 'in_store', // in_store = בחנות, on_the_way = בדרך
-    sourceBranch: 'סניף תל אביב',
-    internalNotes: 'הלקוח ממהר מאוד, ביקש לוודא שכל יתדות האוהל נמצאות בתוך התיק.',
-    createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-    createdByEmployeeName: 'מיכאל',
-    createdByEmployeeNumber: 'EMP-101',
-    logs: [
-      {
-        id: 'l1',
-        userName: 'מיכאל',
-        userNumber: 'EMP-101',
-        action: 'יצירת הזמנה חדשה במערכת',
-        timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
-      },
-      {
-        id: 'l2',
-        userName: 'רועי',
-        userNumber: 'EMP-102',
-        action: 'עדכון מיקום פיזי ל: בחנות',
-        timestamp: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString()
-      },
-      {
-        id: 'l3',
-        userName: 'רועי',
-        userNumber: 'EMP-102',
-        action: 'שינוי סטטוס מ"בתהליך" ל"ממתין לאיסוף"',
-        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
-      }
-    ]
-  },
-  {
-    id: '1002',
-    customerName: 'מיכל אברהם',
-    customerPhone: '054-9876543',
-    customerEmail: 'michal.ab@outlook.com',
-    items: 'תרמיל טיולים Osprey Ariel 65L צבע כחול, פנס ראש Black Diamond Storm 450',
-    orderDate: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString().split('T')[0], // Today
-    dueTime: '14:00',
-    receiptNumber: 'REC-74910',
-    status: 'in_progress',
-    paymentStatus: 'paid_deposit',
-    location: 'on_the_way',
-    sourceBranch: 'סניף חיפה',
-    internalNotes: 'שולמה מקדמה של 200 ש"ח בקופה. נותר לגבות 750 ש"ח בעת האיסוף.',
-    createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
-    createdByEmployeeName: 'רועי',
-    createdByEmployeeNumber: 'EMP-102',
-    logs: [
-      {
-        id: 'l4',
-        userName: 'רועי',
-        userNumber: 'EMP-102',
-        action: 'יצירת הזמנה חדשה במערכת',
-        timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString()
-      }
-    ]
-  },
-  {
-    id: '1003',
-    customerName: 'דניאל גולן',
-    customerPhone: '050-5551234',
-    customerEmail: 'danielg@walla.co.il',
-    items: 'גזייה אלפינית Kovea Spider, 3 מיכלי גז הברגה 230 גרם',
-    orderDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 2 days ago
-    dueTime: '12:00',
-    receiptNumber: 'REC-74922',
-    status: 'awaiting_update',
-    paymentStatus: 'unpaid',
-    location: 'on_the_way',
-    sourceBranch: 'מחסן ראשי',
-    internalNotes: 'חסרה הגזייה במלאי סניף תל אביב. מחכים למשאית הספקה שבועית ביום שני בבוקר.',
-    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-    createdByEmployeeName: 'מיכאל',
-    createdByEmployeeNumber: 'EMP-101',
-    logs: [
-      {
-        id: 'l5',
-        userName: 'מיכאל',
-        userNumber: 'EMP-101',
-        action: 'יצירת הזמנה חדשה במערכת',
-        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
-      }
-    ]
-  },
-  {
-    id: '1004',
-    customerName: 'יובל רפפורט',
-    customerPhone: '053-4447788',
-    customerEmail: 'yuval.rap@gmail.com',
-    items: 'נעלי הרים Lowa Renegade GTX מידה 44 חום',
-    orderDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 5 days ago
-    dueTime: '10:00',
-    receiptNumber: 'REC-74811',
-    status: 'delivered',
-    paymentStatus: 'paid_full',
-    location: 'in_store',
-    sourceBranch: 'סניף תל אביב',
-    internalNotes: 'הגיע לאסוף עם בן הזוג. נמדד בחנות ונמצא מתאים.',
-    createdAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
-    createdByEmployeeName: 'רועי',
-    createdByEmployeeNumber: 'EMP-102',
-    logs: [
-      {
-        id: 'l6',
-        userName: 'רועי',
-        userNumber: 'EMP-102',
-        action: 'יצירת הזמנה חדשה במערכת',
-        timestamp: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString()
-      },
-      {
-        id: 'l7',
-        userName: 'רועי',
-        userNumber: 'EMP-102',
-        action: 'שינוי סטטוס מ"בתהליך" ל"ממתין לאיסוף"',
-        timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
-      },
-      {
-        id: 'l8',
-        userName: 'מיכאל',
-        userNumber: 'EMP-101',
-        action: 'שינוי סטטוס ל"נאסף" - נמסר פיזית ללקוח בחנות',
-        timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
-      }
-    ]
-  }
-];
+// Initial Dummy Data for Camping/Outdoor Store (Empty for Production)
+const INITIAL_ORDERS = [];
 
-const INITIAL_TEAM = [
-  { id: '1', name: 'מיכאל', birthdate: '1991-04-15', phone: '052-1111111', email: 'manager@orderflow.com', role: 'manager', employeeNumber: 'EMP-101' },
-  { id: '2', name: 'רועי', birthdate: '1998-08-20', phone: '054-2222222', email: 'roy@orderflow.com', role: 'employee', employeeNumber: 'EMP-102' }
-];
+const INITIAL_TEAM = [];
 
 const DEFAULT_SETTINGS = {
   whatsappTemplate: 'היי {שם}, שמחים לעדכן שההזמנה שלך {פריטים} מוכנה לאיסוף בסניף תל אביב! היא מחכה לך ב{מיקום}. נשמח לראותך!',
@@ -185,8 +45,8 @@ const initLocalData = () => {
     localStorage.setItem(KEYS.CUSTOMERS, JSON.stringify([]));
   }
   // Set default logged in user if not set
-  if (!localStorage.getItem(KEYS.CURRENT_USER)) {
-    localStorage.setItem(KEYS.CURRENT_USER, JSON.stringify(INITIAL_TEAM[1])); // Roy by default
+  if (!localStorage.getItem(KEYS.CURRENT_USER) && INITIAL_TEAM.length > 0) {
+    localStorage.setItem(KEYS.CURRENT_USER, JSON.stringify(INITIAL_TEAM[0]));
   }
 };
 
@@ -352,6 +212,7 @@ export const dbService = {
       if (isSupabaseConfigured) {
         // First get the current order to compute audit logs
         const { data: currentOrder } = await supabase.from('orders').select('logs, status, location, sourceBranch').eq('id', id).single();
+        if (!currentOrder) throw new Error('הזמנה לא נמצאה');
         
         const logs = [...(currentOrder.logs || [])];
         const newLogEntries = [];
@@ -505,7 +366,8 @@ export const dbService = {
           email: member.email,
           phone: member.phone,
           role: member.role,
-          password: '123456',
+          birthdate: member.birthdate || null,
+          password: member.password || '123456',
           "employeeNumber": member.employeeNumber || `EMP-${Math.floor(Math.random()*1000)}`
         };
         const { data, error } = await supabase
@@ -534,6 +396,23 @@ export const dbService = {
       }
     },
     removeMember: async (id) => {
+      // QA Check: Prevent deleting the last manager
+      let allTeam;
+      if (isSupabaseConfigured) {
+        const { data } = await supabase.from('employees').select('id, role');
+        allTeam = data || [];
+      } else {
+        allTeam = getLocalItem(KEYS.TEAM) || [];
+      }
+      
+      const targetMember = allTeam.find(m => m.id === id);
+      if (targetMember && targetMember.role === 'manager') {
+        const managerCount = allTeam.filter(m => m.role === 'manager').length;
+        if (managerCount <= 1) {
+          throw new Error('לא ניתן למחוק את המנהל האחרון במערכת');
+        }
+      }
+
       if (isSupabaseConfigured) {
         const { error } = await supabase
           .from('employees')

@@ -26,6 +26,7 @@ CREATE TABLE employees (
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
     phone TEXT,
+    birthdate DATE,
     "employeeNumber" TEXT UNIQUE NOT NULL,
     role TEXT NOT NULL CHECK (role IN ('manager', 'employee', 'seller')),
     "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW())

@@ -21,7 +21,9 @@ import {
   FiPrinter,
   FiUsers,
   FiActivity,
-  FiRefreshCw
+  FiRefreshCw,
+  FiEye,
+  FiEyeOff
 } from 'react-icons/fi';
 
 function App() {
@@ -71,10 +73,13 @@ function App() {
   });
   
   // Team addition form state
-  const [newMember, setNewMember] = useState({ name: '', birthdate: '', phone: '', email: '', role: 'employee', employeeNumber: '' });
+  const [newMember, setNewMember] = useState({ name: '', birthdate: '', phone: '', email: '', role: 'employee', employeeNumber: '', password: '' });
+  const [showNewMemberPassword, setShowNewMemberPassword] = useState(false);
+  const [showAddMemberForm, setShowAddMemberForm] = useState(false);
   
   // Team editing form state
   const [editingMember, setEditingMember] = useState(null);
+  const [showEditingMemberPassword, setShowEditingMemberPassword] = useState(false);
 
   // Customers state
   const [customers, setCustomers] = useState([]);
@@ -373,7 +378,8 @@ function App() {
     e.preventDefault();
     try {
       await dbService.team.addMember(newMember);
-      setNewMember({ name: '', birthdate: '', phone: '', email: '', role: 'employee', employeeNumber: '' });
+      setNewMember({ name: '', birthdate: '', phone: '', email: '', role: 'employee', employeeNumber: '', password: '' });
+      setShowAddMemberForm(false);
       fetchData();
     } catch (err) {
       alert("שגיאה בהוספת איש צוות: " + err.message);
@@ -607,7 +613,8 @@ function App() {
       .replace(/{שם}/g, order.customerName)
       .replace(/{פריטים}/g, order.items)
       .replace(/{מיקום}/g, translateLocation(order.location) || 'החנות')
-      .replace(/{קבלה}/g, order.receiptNumber || '');
+      .replace(/{קבלה}/g, order.receiptNumber || '')
+      .replace(/{הזמנה}/g, order.id || '');
     
     // Clean phone number (replace space, hyphens)
     let phone = order.customerPhone.replace(/[-\s]/g, '');
@@ -624,7 +631,8 @@ function App() {
       .replace(/{שם}/g, order.customerName)
       .replace(/{פריטים}/g, order.items)
       .replace(/{מיקום}/g, translateLocation(order.location) || 'החנות')
-      .replace(/{קבלה}/g, order.receiptNumber || '');
+      .replace(/{קבלה}/g, order.receiptNumber || '')
+      .replace(/{הזמנה}/g, order.id || '');
     return body;
   };
 
@@ -2134,13 +2142,13 @@ function App() {
                           onClick={() => {
                             const subject = encodeURIComponent("הזמנתך ב-OrderFlow מוכנה לאיסוף!");
                             const body = encodeURIComponent(generateEmailBody(selectedOrder));
-                            window.open(`mailto:${selectedOrder.customerEmail}?subject=${subject}&body=${body}`);
+                            window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(selectedOrder.customerEmail)}&su=${subject}&body=${body}`, '_blank');
                           }}
                           className="btn btn-secondary"
                           style={{width: '100%'}}
                           disabled={!selectedOrder.customerEmail}
                         >
-                          שלח עדכון בדואר אלקטרוני
+                          שלח עדכון דרך Gmail
                         </button>
                         {!selectedOrder.customerEmail && (
                           <span style={{fontSize: '11px', color: 'var(--color-error)', textAlign: 'center'}}>
@@ -2158,6 +2166,7 @@ function App() {
                               .replace(/{פריטים}/g, selectedOrder.items)
                               .replace(/{מיקום}/g, selectedOrder.location || 'החנות')
                               .replace(/{קבלה}/g, selectedOrder.receiptNumber || '')
+                              .replace(/{הזמנה}/g, selectedOrder.id || '')
                             : 'טוען תבנית...'
                           }
                         </div>
@@ -2242,7 +2251,7 @@ function App() {
                           onChange={(e) => setSettingsForm({...settingsForm, whatsappTemplate: e.target.value})}
                         />
                         <span className="label-sm" style={{marginTop: '-4px'}}>
-                          תגיות זמינות: {"{שם}"} - שם הלקוח, {"{פריטים}"} - פירוט הזמנה, {"{מיקום}"} - מיקום במחסן, {"{קבלה}"} - מספר קבלה.
+                          תגיות זמינות: {"{שם}"} - שם הלקוח, {"{פריטים}"} - פירוט הזמנה, {"{מיקום}"} - מיקום במחסן, {"{קבלה}"} - מספר קבלה, {"{הזמנה}"} - מספר הזמנה במערכת.
                         </span>
                       </div>
 
@@ -2311,7 +2320,7 @@ function App() {
                               </span>
                               {currentUser.role === 'manager' && (
                                 <button 
-                                  onClick={() => setEditingMember(member)}
+                                  onClick={() => { setEditingMember(member); setShowEditingMemberPassword(false); }}
                                   className="btn btn-secondary" 
                                   style={{padding: '4px 6px', fontSize: '11px'}}
                                   title="ערוך פרטי עובד"
@@ -2338,80 +2347,147 @@ function App() {
                     {/* Add member form (Admin/Manager only) */}
                     {currentUser.role === 'manager' ? (
                       <div style={{borderTop: '1px solid var(--color-border)', paddingTop: '16px'}}>
-                        <span className="label-sm" style={{display: 'block', marginBottom: '12px', fontWeight: 'bold'}}>הוספת איש צוות חדש:</span>
-                        <form onSubmit={handleAddTeamMember} style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
-                          <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px'}}>
-                            <div className="form-group" style={{marginBottom: '0'}}>
-                              <input 
-                                type="text" 
-                                required
-                                className="form-input" 
-                                placeholder="שם מלא של העובד *"
-                                value={newMember.name}
-                                onChange={(e) => setNewMember({...newMember, name: e.target.value})}
-                              />
-                            </div>
-                            <div className="form-group" style={{marginBottom: '0'}}>
-                              <input 
-                                type="text" 
-                                required
-                                className="form-input" 
-                                placeholder="מספר עובד (לדוגמה: EMP-103) *"
-                                value={newMember.employeeNumber}
-                                onChange={(e) => setNewMember({...newMember, employeeNumber: e.target.value})}
-                              />
-                            </div>
-                          </div>
-                          
-                          <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px'}}>
-                            <div className="form-group" style={{marginBottom: '0', display: 'flex', flexDirection: 'column'}}>
-                              <span style={{fontSize: '11px', color: 'var(--color-outline)', marginBottom: '2px', marginRight: '4px'}}>תאריך לידה *</span>
-                              <input 
-                                type="date" 
-                                required
-                                className="form-input" 
-                                value={newMember.birthdate}
-                                onChange={(e) => setNewMember({...newMember, birthdate: e.target.value})}
-                              />
-                            </div>
-                            <div className="form-group" style={{marginBottom: '0'}}>
-                              <input 
-                                type="text" 
-                                required
-                                className="form-input" 
-                                placeholder="מספר טלפון *"
-                                value={newMember.phone}
-                                onChange={(e) => setNewMember({...newMember, phone: e.target.value})}
-                              />
-                            </div>
-                          </div>
-
-                          <div className="form-group" style={{marginBottom: '0'}}>
-                            <input 
-                              type="email" 
-                              required
-                              className="form-input" 
-                              placeholder="כתובת אימייל להתחברות *"
-                              value={newMember.email}
-                              onChange={(e) => setNewMember({...newMember, email: e.target.value})}
-                            />
-                          </div>
-
-                          <div className="form-group" style={{marginBottom: '0'}}>
-                            <select 
-                              className="form-select"
-                              value={newMember.role}
-                              onChange={(e) => setNewMember({...newMember, role: e.target.value})}
-                            >
-                              <option value="employee">אחראי משמרת</option>
-                              <option value="salesperson">מוכרן</option>
-                              <option value="manager">מנהל סניף</option>
-                            </select>
-                          </div>
-                          <button type="submit" className="btn btn-secondary" style={{width: '100%', borderStyle: 'dashed'}}>
-                            <FiUserPlus style={{marginLeft: '6px'}} /> הוסף עובד לצוות
+                        {!showAddMemberForm ? (
+                          <button 
+                            type="button"
+                            className="btn btn-secondary" 
+                            style={{width: '100%', borderStyle: 'dashed'}}
+                            onClick={() => {
+                              setShowAddMemberForm(true);
+                              setNewMember({ name: '', birthdate: '', phone: '', email: '', role: 'employee', employeeNumber: '', password: '' });
+                            }}
+                          >
+                            <FiUserPlus style={{marginLeft: '6px'}} /> הוספת איש צוות חדש
                           </button>
-                        </form>
+                        ) : (
+                          <>
+                            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px'}}>
+                              <span className="label-sm" style={{fontWeight: 'bold', margin: 0}}>הוספת איש צוות חדש:</span>
+                              <button 
+                                type="button" 
+                                className="btn btn-secondary" 
+                                style={{padding: '2px 8px', fontSize: '12px'}} 
+                                onClick={() => setShowAddMemberForm(false)}
+                              >
+                                ביטול
+                              </button>
+                            </div>
+                            <form onSubmit={handleAddTeamMember} style={{display: 'flex', flexDirection: 'column', gap: '10px'}} autoComplete="off">
+                              <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px'}}>
+                                <div className="form-group" style={{marginBottom: '0'}}>
+                                  <input 
+                                    type="text" 
+                                    required
+                                    className="form-input" 
+                                    placeholder="שם מלא של העובד *"
+                                    value={newMember.name}
+                                    onChange={(e) => setNewMember({...newMember, name: e.target.value})}
+                                    autoComplete="new-password"
+                                  />
+                                </div>
+                                <div className="form-group" style={{marginBottom: '0'}}>
+                                  <input 
+                                    type="text" 
+                                    required
+                                    className="form-input" 
+                                    placeholder="מספר עובד (לדוגמה: EMP-103) *"
+                                    value={newMember.employeeNumber}
+                                    onChange={(e) => setNewMember({...newMember, employeeNumber: e.target.value})}
+                                    autoComplete="new-password"
+                                  />
+                                </div>
+                              </div>
+                              
+                              <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px'}}>
+                                <div className="form-group" style={{marginBottom: '0', display: 'flex', flexDirection: 'column'}}>
+                                  <span style={{fontSize: '11px', color: 'var(--color-outline)', marginBottom: '2px', marginRight: '4px'}}>תאריך לידה *</span>
+                                  <input 
+                                    type="date" 
+                                    required
+                                    className="form-input" 
+                                    value={newMember.birthdate}
+                                    onChange={(e) => setNewMember({...newMember, birthdate: e.target.value})}
+                                    autoComplete="new-password"
+                                  />
+                                </div>
+                                <div className="form-group" style={{marginBottom: '0'}}>
+                                  <input 
+                                    type="text" 
+                                    required
+                                    className="form-input" 
+                                    placeholder="מספר טלפון *"
+                                    value={newMember.phone}
+                                    onChange={(e) => setNewMember({...newMember, phone: e.target.value})}
+                                    autoComplete="new-password"
+                                  />
+                                </div>
+                              </div>
+
+                              <div className="form-group" style={{marginBottom: '0'}}>
+                                <input 
+                                  type="email" 
+                                  required
+                                  className="form-input" 
+                                  placeholder="כתובת אימייל להתחברות *"
+                                  value={newMember.email}
+                                  onChange={(e) => setNewMember({...newMember, email: e.target.value})}
+                                  autoComplete="new-password"
+                                />
+                              </div>
+
+                              <div className="form-group" style={{marginBottom: '0'}}>
+                                <div style={{ position: 'relative', width: '100%' }}>
+                                  <input 
+                                    type={showNewMemberPassword ? "text" : "password"} 
+                                    required
+                                    className="form-input" 
+                                    placeholder="סיסמה להתחברות *"
+                                    value={newMember.password || ''}
+                                    onChange={(e) => setNewMember({...newMember, password: e.target.value})}
+                                    style={{ paddingLeft: '40px' }}
+                                    autoComplete="new-password"
+                                  />
+                                  <button 
+                                    type="button"
+                                    onClick={() => setShowNewMemberPassword(!showNewMemberPassword)}
+                                    style={{
+                                      position: 'absolute',
+                                      left: '12px',
+                                      top: '50%',
+                                      transform: 'translateY(-50%)',
+                                      background: 'none',
+                                      border: 'none',
+                                      color: 'var(--color-outline)',
+                                      cursor: 'pointer',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      padding: '4px',
+                                      zIndex: 10
+                                    }}
+                                    title={showNewMemberPassword ? "הסתר סיסמה" : "הצג סיסמה"}
+                                  >
+                                    {showNewMemberPassword ? <FiEyeOff size={16} /> : <FiEye size={16} />}
+                                  </button>
+                                </div>
+                              </div>
+
+                              <div className="form-group" style={{marginBottom: '0'}}>
+                                <select 
+                                  className="form-select"
+                                  value={newMember.role}
+                                  onChange={(e) => setNewMember({...newMember, role: e.target.value})}
+                                >
+                                  <option value="employee">אחראי משמרת</option>
+                                  <option value="salesperson">מוכרן</option>
+                                  <option value="manager">מנהל סניף</option>
+                                </select>
+                              </div>
+                              <button type="submit" className="btn btn-secondary" style={{width: '100%', borderStyle: 'dashed'}}>
+                                <FiUserPlus style={{marginLeft: '6px'}} /> הוסף עובד לצוות
+                              </button>
+                            </form>
+                          </>
+                        )}
                       </div>
                     ) : (
                       <div style={{backgroundColor: 'rgba(245, 158, 11, 0.05)', border: '1px solid rgba(245, 158, 11, 0.2)', padding: '12px', borderRadius: 'var(--radius-default)', display: 'flex', gap: '10px', alignItems: 'center'}}>
@@ -2607,6 +2683,41 @@ function App() {
                   value={editingMember.email || ''}
                   onChange={(e) => setEditingMember({...editingMember, email: e.target.value})}
                 />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">סיסמה להתחברות *</label>
+                <div style={{ position: 'relative', width: '100%' }}>
+                  <input 
+                    type={showEditingMemberPassword ? "text" : "password"} 
+                    required
+                    className="form-input" 
+                    value={editingMember.password || ''}
+                    onChange={(e) => setEditingMember({...editingMember, password: e.target.value})}
+                    style={{ paddingLeft: '40px' }}
+                  />
+                  <button 
+                    type="button"
+                    onClick={() => setShowEditingMemberPassword(!showEditingMemberPassword)}
+                    style={{
+                      position: 'absolute',
+                      left: '12px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'none',
+                      border: 'none',
+                      color: 'var(--color-outline)',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      padding: '4px',
+                      zIndex: 10
+                    }}
+                    title={showEditingMemberPassword ? "הסתר סיסמה" : "הצג סיסמה"}
+                  >
+                    {showEditingMemberPassword ? <FiEyeOff size={16} /> : <FiEye size={16} />}
+                  </button>
+                </div>
               </div>
 
               <div style={{display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '16px'}}>

@@ -163,5 +163,24 @@ describe('dbService Cloud-First Operations', () => {
         })
       );
     });
+
+    it('team.addMember inserts into employees table with custom password if provided', async () => {
+      mockSupabaseQuery.single.mockResolvedValueOnce({
+        data: { id: 'new-emp-id', name: 'New Guy' },
+        error: null
+      });
+
+      await dbService.team.addMember({ name: 'New Guy', email: 'new@test.com', password: 'my-custom-password' });
+
+      expect(mockFrom).toHaveBeenCalledWith('employees');
+      expect(mockSupabaseQuery.insert).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({
+            name: 'New Guy',
+            password: 'my-custom-password'
+          })
+        ])
+      );
+    });
   });
 });
