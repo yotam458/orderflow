@@ -121,3 +121,10 @@ The application is deployed on **Vercel** with a linked production domain:
 * **Production URL**: [https://orderflow458.vercel.app](https://orderflow458.vercel.app)
 * **Hosting Provider**: Vercel (renamed and aliased)
 * **CI/CD**: Connected directly to the GitHub repository [yotam458/orderflow](https://github.com/yotam458/orderflow) for automatic deployments on every commit.
+
+---
+
+## 💡 Future Ideas
+
+* **WhatsApp 2FA for Admins:** Add a Two-Factor Authentication layer for branch managers using a WhatsApp bot to send a secure, randomized OTP upon login.
+* **Drag & Drop Interface:** Implement an intuitive kanban-style drag-and-drop board for easier management of order statuses and workflows.
