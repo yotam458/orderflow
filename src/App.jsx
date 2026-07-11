@@ -45,8 +45,8 @@ function App() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   
   // Login Form
-  const [loginEmail, setLoginEmail] = useState('roy@orderflow.com');
-  const [loginPassword, setLoginPassword] = useState('123456');
+  const [loginEmail, setLoginEmail] = useState('yhai458@gmail.com');
+  const [loginPassword, setLoginPassword] = useState('0000');
   const [loginError, setLoginError] = useState('');
   
   // New Order Form
@@ -855,13 +855,13 @@ function App() {
                   placeholder="הזן כתובת אימייל"
                   onChange={(e) => {
                     setLoginEmail(e.target.value);
-                    if (e.target.value === 'roy@orderflow.com') setLoginPassword('123456');
-                    if (e.target.value === 'manager@orderflow.com') setLoginPassword('123456');
+                    if (e.target.value === 'yhai458@gmail.com') setLoginPassword('0000');
+                    if (e.target.value === 'shel12@gmail.com') setLoginPassword('0000');
                   }}
                 />
                 <datalist id="saved-emails">
-                  <option value="roy@orderflow.com">רועי (אחראי משמרת)</option>
-                  <option value="manager@orderflow.com">מיכאל (מנהל חנות)</option>
+                  <option value="yhai458@gmail.com">יותם חי (מנהל סניף)</option>
+                  <option value="shel12@gmail.com">שלי (אחראי משמרת)</option>
                 </datalist>
               </div>
               <div className="form-group">
