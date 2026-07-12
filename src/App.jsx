@@ -2554,7 +2554,7 @@ function App() {
                                   onChange={(e) => setNewMember({...newMember, role: e.target.value})}
                                 >
                                   <option value="employee">אחראי משמרת</option>
-                                  <option value="salesperson">מוכרן</option>
+                                  <option value="seller">מוכרן</option>
                                   <option value="manager">מנהל סניף</option>
                                 </select>
                               </div>
@@ -2744,7 +2744,7 @@ function App() {
                     disabled={editingMember.id === currentUser.id}
                   >
                     <option value="employee">אחראי משמרת</option>
-                    <option value="salesperson">מוכרן</option>
+                    <option value="seller">מוכרן</option>
                     <option value="manager">מנהל סניף</option>
                   </select>
                 </div>
